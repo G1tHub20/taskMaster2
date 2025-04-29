@@ -1,15 +1,15 @@
 <template>
   <h2>タスク</h2>
   <form @submit.prevent="addItem">
-    <input type="text" v-model="newItem">
+    <input type="text" v-model="state.newItem"> <!-- state.newItem に直接バインディング -->
     <button type="submit">New Task</button>
   </form>
   <ul>
-    <li v-for="(task, index) in incompleteTasks" :key="task.id"> <!-- v-forを使うときは各要素に一意なキーを付与 -->
+    <li v-for="(task) in incompleteTasks" :key="task.id"> <!-- v-forを使うときは各要素に一意なキーを付与すべき -->
       <input type="checkbox" v-model="task.isDone"> <!-- checkboxなのでboolean-->
       <span>{{ task.item }}</span>
       <input type="date" v-model="task.deadLine">
-      <button @click="deleteItem(index)">削除</button>
+      <button @click="deleteItem(task.id)">削除</button>
     </li>
   </ul>
 
@@ -23,12 +23,12 @@
   </ul>
 
   <!-- デバッグ用 -->
-  <pre>{{ tasks }}</pre>
+  <pre>{{ state.tasks }}</pre>
 </template>
 
 
 <script setup>
-  import { reactive, toRefs, watch, computed, onMounted } from 'vue'
+  import { reactive, watch, computed, onMounted } from 'vue'
 
   // リアクティブな状態管理を行う
   const state = reactive({
@@ -70,8 +70,6 @@
       state.tasks = JSON.parse(storedTasks)
     }
   })
-
-  const { newItem, tasks } = toRefs(state)
 </script>
 
 
