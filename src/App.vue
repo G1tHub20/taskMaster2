@@ -33,7 +33,7 @@
         <p>期限: <input type="date" v-model="editDeadLine"></p>
         <div>
           <button @click="updateTask">更新</button>
-          <button @click="deleteItem(editTask.value)">削除</button>
+          <button @click="deleteItem(editTask)">削除</button>
         </div>
       </div>
     </VueFinalModal>
@@ -49,11 +49,11 @@
     </ul>
 
     <!-- デバッグ用 -->
-    <!-- <pre>{{ state.tasks }}</pre>
+    <pre>{{ state.tasks }}</pre>
     <pre>isModalVisible：{{ isModalVisible }}</pre>
     <pre>editTask：{{ editTask }}</pre>
     <pre>editItem：{{ editItem }}</pre>
-    <pre>editDeadLine：{{ editDeadLine }}</pre> -->
+    <pre>editDeadLine：{{ editDeadLine }}</pre>
   </main>
 </template>
 
@@ -122,14 +122,7 @@
       
   // タスクの削除
   const deleteItem = (taskToDelete) => {
-    console.log('Deleting task:', taskToDelete);  // 削除されるタスクの情報を確認
-    // if (!taskToDelete) {
-    //   console.log('No task to delete');
-    // }
-    if (!taskToDelete || !taskToDelete.id) {
-      console.log('No task to delete or invalid task');
-      return;
-    }
+    console.log('Deleting task:', taskToDelete.id);  // 削除されるタスクの情報を確認
     const index = state.tasks.findIndex(task => task.id === taskToDelete.id)
     if (index !== -1) {
       state.tasks.splice(index, 1)
