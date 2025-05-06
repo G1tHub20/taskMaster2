@@ -9,20 +9,27 @@
       </p>
     </form>
     <h2>タスク</h2>
-    <ul>
-      <li v-for="(task) in incompleteTasks" :key="task.id" class="task-item"> <!-- v-forを使うときは各要素に一意なキーを付与すべき -->
-    <div class="task-content">
-      <label>
-        <input type="checkbox" v-model="task.isDone">
-        <span>{{ task.item }}</span>
-      </label>
-      <p v-if="task.deadLine" class="due">
-        期限: {{ new Date(task.deadLine).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }) }}
-      </p>
-    </div>
-    <button @click="openModal(task)" class="edit">編集</button>
-      </li>
-    </ul>
+    <!-- v-forの代わりにvuedraggableを使用 -->
+    <draggable
+      :list="incompleteTasks"
+      item-key="id"
+      tag="ul"
+      class="task-list"
+      @end="onDragEnd"
+    >
+      <template #item="{ element: task }">
+        <li :key="task.id" class="task-item"> <!-- v-forを使うときは各要素に一意なキーを付与すべき -->
+          <div class="task-content">
+            <input type="checkbox" v-model="task.isDone">
+            <span>{{ task.item }}</span>
+            <p v-if="task.deadLine" class="due">
+              期限: {{ new Date(task.deadLine).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }) }}
+            </p>
+          </div>
+          <button @click="openModal(task)" class="edit">編集</button>
+        </li>
+      </template>
+    </draggable>
 
     <!-- モーダル -->
     <VueFinalModal v-model="isModalVisible" :click-to-close="false" content-class="modal-content">
@@ -41,26 +48,24 @@
     <h2>完了済み</h2>
     <ul>
       <li v-for="(task) in completeTasks" :key="task.id">
-        <label>
-          <input type="checkbox" v-model="task.isDone"> <!-- checkboxなのでboolean-->
-          <span :class="{ done: task.isDone }">{{ task.item }}</span> <!-- 付与するCSSクラス名: 条件 -->
-        </label>
+        <input type="checkbox" v-model="task.isDone"> <!-- checkboxなのでboolean-->
+        <span :class="{ done: task.isDone }">{{ task.item }}</span> <!-- 付与するCSSクラス名: 条件 -->
       </li>
     </ul>
 
     <!-- デバッグ用 -->
-    <pre>{{ state.tasks }}</pre>
+    <!-- <pre>{{ state.tasks }}</pre>
     <pre>isModalVisible：{{ isModalVisible }}</pre>
     <pre>editTask：{{ editTask }}</pre>
     <pre>editItem：{{ editItem }}</pre>
-    <pre>editDeadLine：{{ editDeadLine }}</pre>
+    <pre>editDeadLine：{{ editDeadLine }}</pre> -->
   </main>
 </template>
-
 
 <script setup>
   import { reactive, ref, watch, computed, onMounted } from 'vue'
   import { VueFinalModal } from 'vue-final-modal'
+  import draggable from 'vuedraggable'
 
   // リアクティブな状態管理を行う
   const state = reactive({
@@ -92,7 +97,7 @@
       isDone: false,
       deadLine: ''
     }
-    state.tasks.push(task)
+    state.tasks.unshift(task)
     state.newItem = ''
   }
 
@@ -129,6 +134,13 @@
       isModalVisible.value = false  // モーダルを閉じる
       editTask.value = null         // 編集状態のリセット
     }
+  }
+
+  // 並び替え終了時に state.tasks を更新（未完了タスクと完了済みタスクを統合）
+  const onDragEnd = () => {
+    const newOrder = [...incompleteTasks.value] // ... はスプレッド構文。並び替え後のincompleteTasks.valueをコピー
+    const complete = completeTasks.value        // 並び順が変更されないのでそのまま
+    state.tasks = [...newOrder, ...complete]    // 未完了タスクと完了済みタスクで再構成（上書き）
   }
 
   // コンポーネント作成時（レンダリング後）にlocalStorageからタスクを取得

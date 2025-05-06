@@ -1,35 +1,115 @@
-@import './base.css';
-
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+body {
+  font-family: 'Noto Sans JP', sans-serif;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+main {
+  max-width: 360px;
+  margin: 15px auto;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+li {
+  list-style: none;
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+.task-content input[type="checkbox"],
+.task-content span {
+  vertical-align: middle;
+}
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+li > span.done {
+  text-decoration: line-through; /* 取り消し線 */
+}
+
+form {
+  text-align: center;
+}
+
+input[type=text] {
+  width: 320px;
+  border-radius: 0.3rem;
+  background-color: #efefef;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1.4rem;
+  text-indent: 0.3rem;
+}
+
+input:focus-visible {
+  outline: none;
+}
+
+input[type=checkbox] {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  appearance: none;
+  content: "";
+  position: relative;
+  top: 0.3em;
+  margin: 0 5px 0 0;
+  background-image: none, url("src/assets/icon_incomp.svg");
+  background-size: 70% auto, 100%;
+  background-position: top 55% left 50%, 0 0;
+  background-repeat: no-repeat, no-repeat;
+  width: 25px;
+  height: 25px;
+}
+
+input[type="checkbox"]:checked {
+  background-image: none, url("src/assets/icon_comp.svg");
+}
+
+h2 {
+  margin-bottom: 0em;
+}
+
+button {
+  margin: 0 1rem;
+}
+
+button.edit {
+  line-height: 1.0;
+}
+ul {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 1.5em;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 320px;
+}
+
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  font-size: 3.0rem;
+  cursor: pointer;
+}
+
+p.due {
+  font-size: 0.75em;
+  margin: 0;
+  padding-left: 2rem;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
