@@ -17,7 +17,7 @@ form {
   text-align: center;
 }
 input[type=text] {
-  width: 330px;
+  width: 320px;
   border-radius: 0.3rem;
   background-color: #efefef;
   border: none;
@@ -93,8 +93,8 @@ ul {
   border-radius: 8px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  max-width: 90%;
-  width: 300px;
+  /* max-width: 90%; */
+  width: 320px;
 }
 .close-button {
   position: absolute;
