@@ -1,51 +1,60 @@
 <template>
-  <h2>タスク</h2>
-  <form @submit.prevent="addItem">
-    <input type="text" v-model="state.newItem"> <!-- state.newItem に直接バインディング -->
-    <button type="submit">タスクの追加</button>
-  </form>
-  <ul>
-    <li v-for="(task) in incompleteTasks" :key="task.id"> <!-- v-forを使うときは各要素に一意なキーを付与すべき -->
+  <main>
+    <form @submit.prevent="addItem">
+      <p>
+        <input type="text" v-model="state.newItem" placeholder="タスクを追加" autofocus> <!-- state.newItem に直接バインディング -->
+      </p>
+      <p>
+        <button type="submit" class="addItem">タスクを追加</button>
+      </p>
+    </form>
+    <h2>タスク</h2>
+    <ul>
+      <li v-for="(task) in incompleteTasks" :key="task.id" class="task-item"> <!-- v-forを使うときは各要素に一意なキーを付与すべき -->
+    <div class="task-content">
       <label>
-        <input type="checkbox" v-model="task.isDone"> <!-- checkboxなのでboolean-->
+        <input type="checkbox" v-model="task.isDone">
         <span>{{ task.item }}</span>
-        <span v-if="task.deadLine">DUE:{{ new Date(task.deadLine).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }) }}</span>
       </label>
-      <!-- <button @click="deleteItem(task.id)">削除</button> -->
-      <button @click="openModal(task)">編集</button>
-    </li>
-  </ul>
-
-  <!-- モーダル -->
-  <VueFinalModal v-model="isModalVisible" :click-to-close="false" content-class="modal-center">
-    <div>
-      <h2>タスクを編集</h2>
-      <input v-model="editItem">
-      DUE:<input type="date" v-model="editDeadLine">
-      <div>
-        <button @click="isModalVisible = false">キャンセル</button>
-        <button @click="updateTask">更新</button>
-        <button @click="deleteItem(editTask.value)">削除</button>
-      </div>
+      <p v-if="task.deadLine" class="due">
+        期限: {{ new Date(task.deadLine).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }) }}
+      </p>
     </div>
-  </VueFinalModal>
+    <button @click="openModal(task)" class="edit">編集</button>
+      </li>
+    </ul>
 
-  <h2>完了済み</h2>
-  <ul>
-    <li v-for="(task) in completeTasks" :key="task.id">
-      <label>
-        <input type="checkbox" v-model="task.isDone"> <!-- checkboxなのでboolean-->
-        <span :class="{ done: task.isDone }">{{ task.item }}</span> <!-- 付与するCSSクラス名: 条件 -->
-      </label>
-    </li>
-  </ul>
+    <!-- モーダル -->
+    <VueFinalModal v-model="isModalVisible" :click-to-close="false" content-class="modal-content">
+      <button class="close-button" @click="isModalVisible = false">×</button>
+      <div>
+        <h2>タスクを編集</h2>
+        <p><input type="text" v-model="editItem"></p>
+        <p>期限: <input type="date" v-model="editDeadLine"></p>
+        <div>
+          <button @click="updateTask">更新</button>
+          <button @click="deleteItem(editTask.value)">削除</button>
+        </div>
+      </div>
+    </VueFinalModal>
 
-  <!-- デバッグ用 -->
-  <pre>{{ state.tasks }}</pre>
-  <pre>isModalVisible：{{ isModalVisible }}</pre>
-  <pre>editTask：{{ editTask }}</pre>
-  <pre>editItem：{{ editItem }}</pre>
-  <pre>editDeadLine：{{ editDeadLine }}</pre>
+    <h2>完了済み</h2>
+    <ul>
+      <li v-for="(task) in completeTasks" :key="task.id">
+        <label>
+          <input type="checkbox" v-model="task.isDone"> <!-- checkboxなのでboolean-->
+          <span :class="{ done: task.isDone }">{{ task.item }}</span> <!-- 付与するCSSクラス名: 条件 -->
+        </label>
+      </li>
+    </ul>
+
+    <!-- デバッグ用 -->
+    <!-- <pre>{{ state.tasks }}</pre>
+    <pre>isModalVisible：{{ isModalVisible }}</pre>
+    <pre>editTask：{{ editTask }}</pre>
+    <pre>editItem：{{ editItem }}</pre>
+    <pre>editDeadLine：{{ editDeadLine }}</pre> -->
+  </main>
 </template>
 
 
@@ -97,6 +106,11 @@
     isModalVisible.value = true
   }
 
+  // const closeModal = () => {
+  //   console.log("closeModal");
+  //   this.isModalVisible.value = false;
+  // }
+
   // 編集を保存
   const updateTask = () => {
     if (editTask.value) {
@@ -135,51 +149,5 @@
 
 
 <style>
-
-  #app ul {
-    list-style: none;
-  }
-  #app li label > span.done {
-    text-decoration: line-through; /* 取り消し線 */
-  }
-  #app input[type=checkbox] {
-    margin: 0;
-    padding: 0;
-    background: none;
-    border: none;
-    border-radius: 0;
-    outline: none;
-    appearance: none;
-  }
-
-  #app input[type=checkbox] {
-    content: "";
-    position: relative;
-    top: 0.3em;
-    margin: 0 5px 0 0;
-    background-image: none, url("src/assets/icon_incomp.svg");
-    background-size: 70% auto, 100%;
-    background-position: top 55% left 50%, 0 0;
-    background-repeat: no-repeat, no-repeat;
-    width: 25px;
-    height: 25px;
-  }
-  #app input[type="checkbox"]:checked {
-    background-image: none, url("src/assets/icon_comp.svg");
-  }
-
-  .modal-center {
-    position: fixed;
-    top: 25%;
-    left: 75%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 1.5em;
-    border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    max-width: 90%;
-    width: 300px;
-  }
 
 </style>

@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue' // ViteでJSに変換されたものをimport
+import './assets/style.css' // リセットCSS
 
 const app = createApp(App)  // 引数に指定されたApp.vueを元にUIを構築
 app.mount('#app')           // index.htmlの指定要素にマウント
